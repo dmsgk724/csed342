@@ -8,7 +8,7 @@ def problem_1a():
     return a number between 0 and 10
     """
     # BEGIN_YOUR_ANSWER
-    raise NotImplementedError
+    return 1
     # END_YOUR_ANSWER
 
 def problem_1b():
@@ -16,7 +16,7 @@ def problem_1b():
     return a number between 0 and 1
     """
     # BEGIN_YOUR_ANSWER
-    raise NotImplementedError
+    return 3/5
     # END_YOUR_ANSWER
 
 def problem_1c():
@@ -24,7 +24,7 @@ def problem_1c():
     return one of [1, 2, 3, 4, 5]
     """
     # BEGIN_YOUR_ANSWER
-    raise NotImplementedError
+    return 1
     # END_YOUR_ANSWER
 
 ############################################################
@@ -47,7 +47,16 @@ def getLongestWord(text):
     """
 
     # BEGIN_YOUR_ANSWER (our solution is 4 line of code, but don't worry if you deviate from this)
-    raise NotImplementedError
+    ret=[]
+    res=0
+    for text_ in text.split():
+        if(len(text_)>res):
+            res=len(text_)
+            ret.clear()
+            ret.append(text_)
+        elif(len(text_)==res):
+            ret.append(text_)    
+    return min(ret)
     # END_YOUR_ANSWER
     
 ############################################################
@@ -68,7 +77,7 @@ def manhattanDistance(loc1, loc2):
     """
     # BEGIN_YOUR_ANSWER (our solution is 1 line of code, but don't worry if you deviate from this)
     # raise NotImplementedError
-    raise NotImplementedError
+    return  sum([abs(lo2-loc1[i]) for i,lo2 in enumerate(loc2)])
     # END_YOUR_ANSWER
 
 ############################################################
@@ -88,7 +97,7 @@ def euclideanDistance(loc1, loc2):
     You can exploit math library to implement it as one line code without any other library!
     """
     # BEGIN_YOUR_ANSWER (our solution is 1 lines of code, but don't worry if you deviate from this)
-    raise NotImplementedError
+    return math.sqrt(sum([math.pow(lo2-loc1[i],2) for i,lo2 in enumerate(loc2)]))
     # END_YOUR_ANSWER
 
 ############################################################
@@ -120,8 +129,43 @@ def countMutatedSentences(sentence):
     - You should apply dynamic programming for efficiency.
     """
     # BEGIN_YOUR_ANSWER (our solution is 17 lines of code, but don't worry if you deviate from this)
-    # raise NotImplementedError
-    raise NotImplementedError
+    words=sentence.split()
+    word_set=set(words) #중복없는 word
+
+    pairs={word:set() for word in word_set}
+    
+    #pairs[cur_word]-> 뒤에 갈 수 있는 Pair
+    
+    dp=[{j:None for j in word_set} for i in range(len(words))]
+    # dp[cur_len][cur_word]
+    
+    for prev,cur in zip(words[:-1],words[1:]):
+        pairs[cur].add(prev)
+
+    for word in word_set:
+        dp[0][word]=1
+    
+    for x in range(1, len(words)):
+        for word in word_set:
+            for e in pairs[word]: ## 현재 word앞에 있는 prev array
+                if(x!=0):
+                    if(dp[x][word]==None) :
+                        dp[x][word]=0
+                    if(dp[x-1][e]==None):
+                        dp[x-1][e]=0
+                    dp[x][word]=dp[x][word]+dp[x-1][e]
+    res=0
+    for word in word_set:
+        if(dp[len(words)-1][word]==None) :
+            continue
+        else :
+            res+=dp[len(words)-1][word]
+
+    return res
+
+
+
+   
     # END_YOUR_ANSWER
 
 ############################################################
@@ -135,7 +179,7 @@ def sparseVectorDotProduct(v1, v2):
     This function will be useful later for linear classifiers.
     """
     # BEGIN_YOUR_ANSWER (our solution is 1 lines of code, but don't worry if you deviate from this)
-    raise NotImplementedError
+    return sum([v1_*v2[k] for k,v1_ in v1.items()])
     # END_YOUR_ANSWER
 
 ############################################################
@@ -147,7 +191,9 @@ def incrementSparseVector(v1, scale, v2):
     This function will be useful later for linear classifiers.
     """
     # BEGIN_YOUR_ANSWER (our solution is 2 lines of code, but don't worry if you deviate from this)
-    raise NotImplementedError
+    key_v12=set(list(v1.keys())+list(v2.keys()))
+    for key in key_v12:
+        v1[key]=v1[key]+scale*v2[key]
     # END_YOUR_ANSWER
 
 ############################################################
@@ -161,5 +207,12 @@ def computeMostFrequentWord(text):
     You might find it useful to use collections.defaultdict(int).
     """
     # BEGIN_YOUR_ANSWER (our solution is 6 lines of code, but don't worry if you deviate from this)
-    raise NotImplementedError
+    d=collections.defaultdict(int)
+    for text_ in text.split():
+        d[text_]+=1  
+    ret=[k for k,v in d.items() if max(d.values())==v]
+    return set(ret), max(d.values())
+
+
+
     # END_YOUR_ANSWER
