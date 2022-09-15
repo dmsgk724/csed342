@@ -8,7 +8,7 @@ def problem_1a():
     return a number between 0 and 10
     """
     # BEGIN_YOUR_ANSWER
-    return 1
+    return 1/2
     # END_YOUR_ANSWER
 
 def problem_1b():
@@ -16,7 +16,11 @@ def problem_1b():
     return a number between 0 and 1
     """
     # BEGIN_YOUR_ANSWER
-    return 3/5
+    #5/p=3/1-p
+    #5(1-p)=3p
+    #5-5p=3p
+    #8p=5
+    return 5/8
     # END_YOUR_ANSWER
 
 def problem_1c():
@@ -24,7 +28,7 @@ def problem_1c():
     return one of [1, 2, 3, 4, 5]
     """
     # BEGIN_YOUR_ANSWER
-    return 1
+    return 5
     # END_YOUR_ANSWER
 
 ############################################################
@@ -76,7 +80,6 @@ def manhattanDistance(loc1, loc2):
     You can exploit sum, abs, zip functions and a generator to implement it as one line code!
     """
     # BEGIN_YOUR_ANSWER (our solution is 1 line of code, but don't worry if you deviate from this)
-    # raise NotImplementedError
     return  sum([abs(lo2-loc1[i]) for i,lo2 in enumerate(loc2)])
     # END_YOUR_ANSWER
 
@@ -131,12 +134,10 @@ def countMutatedSentences(sentence):
     # BEGIN_YOUR_ANSWER (our solution is 17 lines of code, but don't worry if you deviate from this)
     words=sentence.split()
     word_set=set(words) #중복없는 word
-
     pairs={word:set() for word in word_set}
-    
-    #pairs[cur_word]-> 뒤에 갈 수 있는 Pair
-    
-    dp=[{j:None for j in word_set} for i in range(len(words))]
+    #pairs[cur_word]-> prev,,
+       
+    dp=[{j:0 for j in word_set} for i in range(len(words))]
     # dp[cur_len][cur_word]
     
     for prev,cur in zip(words[:-1],words[1:]):
@@ -144,24 +145,14 @@ def countMutatedSentences(sentence):
 
     for word in word_set:
         dp[0][word]=1
-    
+
     for x in range(1, len(words)):
         for word in word_set:
             for e in pairs[word]: ## 현재 word앞에 있는 prev array
-                if(x!=0):
-                    if(dp[x][word]==None) :
-                        dp[x][word]=0
-                    if(dp[x-1][e]==None):
-                        dp[x-1][e]=0
-                    dp[x][word]=dp[x][word]+dp[x-1][e]
-    res=0
-    for word in word_set:
-        if(dp[len(words)-1][word]==None) :
-            continue
-        else :
-            res+=dp[len(words)-1][word]
-
-    return res
+                dp[x][word]=dp[x][word]+dp[x-1][e]
+   
+    return sum(dp[len(words)-1][word] for word in word_set)
+    
 
 
 
@@ -191,8 +182,7 @@ def incrementSparseVector(v1, scale, v2):
     This function will be useful later for linear classifiers.
     """
     # BEGIN_YOUR_ANSWER (our solution is 2 lines of code, but don't worry if you deviate from this)
-    key_v12=set(list(v1.keys())+list(v2.keys()))
-    for key in key_v12:
+    for key in set(list(v1.keys())+list(v2.keys())):
         v1[key]=v1[key]+scale*v2[key]
     # END_YOUR_ANSWER
 
@@ -207,11 +197,11 @@ def computeMostFrequentWord(text):
     You might find it useful to use collections.defaultdict(int).
     """
     # BEGIN_YOUR_ANSWER (our solution is 6 lines of code, but don't worry if you deviate from this)
-    d=collections.defaultdict(int)
+    myDict=collections.defaultdict(int)
     for text_ in text.split():
-        d[text_]+=1  
-    ret=[k for k,v in d.items() if max(d.values())==v]
-    return set(ret), max(d.values())
+        myDict[text_]+=1  
+    ret=[word for word,v in myDict.items() if max(myDict.values())==v]
+    return set(ret), max(myDict.values())
 
 
 
